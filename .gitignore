@@ -1,7 +1,14 @@
-bin
+# Virtual environment
+bin/
 include
-lib
+.venv/
+lib/
 .Python
-tests/
 .envrc
+
+# Python cache and compiled files
 __pycache__
+*.py[cod]
+
+# OS-generated files
+.DS_Store
