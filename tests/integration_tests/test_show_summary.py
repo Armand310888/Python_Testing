@@ -24,3 +24,17 @@ class TestShowSummary:
             in response.get_data(as_text=True)
         )
 
+    def test_display_only_future_competitions(self, client):
+        response = client.post(
+            "/showSummary",
+            data={"email": "testclub@example.com"},
+        )
+
+        assert (
+            "Test - Future Competition"
+            in response.get_data(as_text=True)
+        )
+        assert (
+            "Test - Past Competition"
+            not in response.get_data(as_text=True)
+        )
