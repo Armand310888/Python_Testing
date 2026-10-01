@@ -1,3 +1,4 @@
+from datetime import datetime
 import json
 from flask import (
     Flask,
@@ -41,14 +42,31 @@ def create_app(config=None, competitions=None, clubs=None):
 
     @app.route('/showSummary', methods=['POST'])
     def show_summary():
-        matching_clubs = [club for club in clubs if club['email'] == request.form['email']]
+        matching_clubs = [
+            club
+            for club in clubs
+            if club['email'] == request.form['email']
+        ]
 
         if not matching_clubs:
             return render_template('index.html')
 
         club = matching_clubs[0]
 
-        return render_template('welcome.html', club=club, competitions=competitions)
+        future_competitions = [
+            competition
+            for competition in competitions
+            if datetime.strptime(
+                competition['date'],
+                "%Y-%m-%d %H:%M:%S",
+                ) > datetime.now()
+        ]
+
+        return render_template(
+            'welcome.html',
+            club=club,
+            competitions=future_competitions
+        )
 
     @app.route('/book/<competition>/<club>')
     def book(competition, club):
