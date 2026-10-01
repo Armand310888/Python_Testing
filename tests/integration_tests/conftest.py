@@ -1,3 +1,4 @@
+from flask import template_rendered
 import pytest
 
 from server import create_app
@@ -47,3 +48,14 @@ def app(clubs, competitions):
 @pytest.fixture
 def client(app):
     return app.test_client()
+
+
+@pytest.fixture
+def captured_templates(app):
+    recorded = []
+
+    def record(sender, template, context, **extra):
+        recorded.append((template, context))
+
+    with template_rendered.connected_to(record, app):
+        yield recorded
