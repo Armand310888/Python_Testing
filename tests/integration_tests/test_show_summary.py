@@ -1,3 +1,6 @@
+from flask import url_for
+
+
 class TestShowSummary:
 
     def test_known_email_identifies_club(self, client):
@@ -31,10 +34,64 @@ class TestShowSummary:
         )
 
         assert (
-            "Test - Future Competition"
+            "Test - Future Competition - Available"
+            in response.get_data(as_text=True)
+        )
+        assert (
+            "Test - Future Competition - Full"
             in response.get_data(as_text=True)
         )
         assert (
             "Test - Past Competition"
             not in response.get_data(as_text=True)
         )
+
+    def test_future_competition_displays_booking_link_if_places_available(
+            self,
+            client,
+            competitions,
+            clubs,
+            app
+    ):
+
+        response = client.post(
+            "/showSummary",
+            data={"email": "testclub@example.com"},
+        )
+
+        competition = competitions[0]
+        club = clubs[0]
+
+        with app.test_request_context():
+            url = url_for(
+                'book',
+                competition=competition['name'],
+                club=club['name'],
+            )
+
+        assert url in response.get_data(as_text=True)
+
+    def test_future_competition_hides_booking_link_if_no_places_available(
+            self,
+            client,
+            competitions,
+            clubs,
+            app
+    ):
+
+        response = client.post(
+            "/showSummary",
+            data={"email": "testclub@example.com"},
+        )
+
+        competition = competitions[2]
+        club = clubs[0]
+
+        with app.test_request_context():
+            url = url_for(
+                'book',
+                competition=competition['name'],
+                club=club['name'],
+            )
+
+        assert url not in response.get_data(as_text=True)

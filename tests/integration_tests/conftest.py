@@ -18,7 +18,7 @@ def clubs():
 def competitions():
     return [
         {
-            "name": "Test - Future Competition",
+            "name": "Test - Future Competition - Available",
             "date": "2100-01-01 10:00:00",
             "numberOfPlaces": "15",
         },
@@ -27,15 +27,23 @@ def competitions():
             "date": "2000-01-01 10:00:00",
             "numberOfPlaces": "15",
         },
+        {
+            "name": "Test - Future Competition - Full",
+            "date": "2100-02-01 10:00:00",
+            "numberOfPlaces": "0",
+        }
     ]
 
 
 @pytest.fixture
-def client(clubs, competitions):
-    app = create_app(
+def app(clubs, competitions):
+    return create_app(
         config={"TESTING": True},
         competitions=competitions,
         clubs=clubs
     )
 
+
+@pytest.fixture
+def client(app):
     return app.test_client()
