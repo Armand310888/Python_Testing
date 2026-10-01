@@ -1,15 +1,3 @@
-import pytest
-
-from server import create_app
-
-
-@pytest.fixture
-def client():
-    app = create_app({"TESTING": True})
-
-    return app.test_client()
-
-
 class TestIndex:
 
     def test_index_returns_200(self, client):
