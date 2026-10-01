@@ -21,7 +21,7 @@ def load_competitions():
         return list_of_competitions
 
 
-def create_app(config=None):
+def create_app(config=None, competitions=None, clubs=None):
     app = Flask(__name__)
 
     if config is not None:
@@ -29,8 +29,11 @@ def create_app(config=None):
 
     app.secret_key = 'something_special'
 
-    competitions = load_competitions()
-    clubs = load_clubs()
+    if competitions is None:
+        competitions = load_competitions()
+
+    if clubs is None:
+        clubs = load_clubs()
 
     @app.route('/')
     def index():
