@@ -49,6 +49,7 @@ def create_app(config=None, competitions=None, clubs=None):
         ]
 
         if not matching_clubs:
+            flash('Club not found.')
             return render_template('index.html')
 
         club = matching_clubs[0]
