@@ -3,29 +3,45 @@ from flask import url_for
 
 class TestShowSummary:
 
-    def test_known_email_identifies_club(self, client):
+    def test_known_email_identifies_club(
+        self,
+        client,
+        captured_templates,
+        clubs,
+    ):
+        club = clubs[0]
+
         response = client.post(
-            "/showSummary",
-            data={"email": "testclub@example.com"},
+            '/showSummary',
+            data={'email': club['email']},
         )
+
+        assert len(captured_templates) == 1
+
+        template, context = captured_templates[0]
 
         assert response.status_code == 200
-        assert (
-            "Welcome, testclub@example.com"
-            in response.get_data(as_text=True)
-        )
+        assert template.name == 'welcome.html'
+        assert context['club'] == club
 
-    def test_unknown_email_does_not_display_club_summary(self, client):
+    def test_unknown_email_does_not_display_club_summary(
+        self,
+        client,
+        captured_templates,
+    ):
         response = client.post(
             "/showSummary",
-            data={"email": "unknowclub@example.com"},
+            data={"email": "unknownclub@example.com"},
         )
 
+        assert len(captured_templates) == 1
+
+        template, _ = captured_templates[0]
+        html = response.get_data(as_text=True)
+
         assert response.status_code == 200
-        assert (
-            "Welcome to the GUDLFT Registration Portal!"
-            in response.get_data(as_text=True)
-        )
+        assert template.name == 'index.html'
+        assert 'Club not found.' in html
 
     def test_display_only_future_competitions(self, client):
         response = client.post(
@@ -33,18 +49,11 @@ class TestShowSummary:
             data={"email": "testclub@example.com"},
         )
 
-        assert (
-            "Test - Future Competition - Available"
-            in response.get_data(as_text=True)
-        )
-        assert (
-            "Test - Future Competition - Full"
-            in response.get_data(as_text=True)
-        )
-        assert (
-            "Test - Past Competition"
-            not in response.get_data(as_text=True)
-        )
+        html = response.get_data(as_text=True)
+
+        assert 'Test - Future Competition - Available' in html
+        assert 'Test - Future Competition - Full' in html
+        assert 'Test - Past Competition' not in html
 
     def test_future_competition_displays_booking_link_if_places_available(
         self,
