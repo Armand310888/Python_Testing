@@ -47,11 +47,11 @@ class TestShowSummary:
         )
 
     def test_future_competition_displays_booking_link_if_places_available(
-            self,
-            client,
-            competitions,
-            clubs,
-            app
+        self,
+        client,
+        competitions,
+        clubs,
+        app
     ):
 
         response = client.post(
