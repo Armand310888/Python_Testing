@@ -71,11 +71,19 @@ def create_app(config=None, competitions=None, clubs=None):
 
     @app.route('/book/<competition>/<club>')
     def book(competition, club):
-        found_club = [
+        matching_clubs = [
             c
-            for c in clubs 
+            for c in clubs
             if c['name'] == club
-        ][0]
+        ]
+
+        if not matching_clubs:
+            flash('Club not found.')
+            return render_template(
+                'index.html'
+            )
+
+        found_club = matching_clubs[0]
 
         found_competition = [
             c
@@ -83,7 +91,7 @@ def create_app(config=None, competitions=None, clubs=None):
             if c['name'] == competition
         ][0]
 
-        if found_club and found_competition:
+        if found_competition:
             return render_template(
                 'booking.html',
                 club=found_club,
