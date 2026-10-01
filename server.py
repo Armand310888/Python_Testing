@@ -85,25 +85,27 @@ def create_app(config=None, competitions=None, clubs=None):
 
         found_club = matching_clubs[0]
 
-        found_competition = [
+        matching_competitions = [
             c
             for c in competitions 
             if c['name'] == competition
-        ][0]
+        ]
 
-        if found_competition:
-            return render_template(
-                'booking.html',
-                club=found_club,
-                competition=found_competition
-            )
-        else:
-            flash("Something went wrong-please try again")
+        if not matching_competitions:
+            flash('Something went wrong-please try again')
             return render_template(
                 'welcome.html',
-                club=club,
+                club=found_club,
                 competitions=competitions
             )
+
+        found_competition = matching_competitions[0]
+
+        return render_template(
+            'booking.html',
+            club=found_club,
+            competition=found_competition
+        )
 
     @app.route('/purchasePlaces', methods=['POST'])
     def purchase_places():
