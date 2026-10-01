@@ -41,7 +41,13 @@ def create_app(config=None, competitions=None, clubs=None):
 
     @app.route('/showSummary', methods=['POST'])
     def show_summary():
-        club = [club for club in clubs if club['email'] == request.form['email']][0]
+        matching_clubs = [club for club in clubs if club['email'] == request.form['email']]
+
+        if not matching_clubs:
+            return render_template('index.html')
+
+        club = matching_clubs[0]
+
         return render_template('welcome.html', club=club, competitions=competitions)
 
     @app.route('/book/<competition>/<club>')
