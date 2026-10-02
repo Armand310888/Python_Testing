@@ -12,6 +12,11 @@ def clubs():
             "email": "testclub@example.com",
             "points": "15",
         },
+        {
+            "name": "Test Club 2",
+            "email": "testclub2@example.com",
+            "points": "2",
+        },
     ]
 
 
