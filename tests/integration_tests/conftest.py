@@ -37,16 +37,22 @@ def competitions():
             "name": "Test - Future Competition - Full",
             "date": "2100-02-01 10:00:00",
             "numberOfPlaces": "0",
+        },
+        {
+            "name": "Test - Future Competition 2 - Available",
+            "date": "2100-02-01 10:00:00",
+            "numberOfPlaces": "15",
         }
     ]
 
 
 @pytest.fixture
-def app(clubs, competitions):
+def app(clubs, competitions, bookings):
     return create_app(
         config={"TESTING": True},
         competitions=competitions,
-        clubs=clubs
+        clubs=clubs,
+        bookings=bookings,
     )
 
 
@@ -64,3 +70,23 @@ def captured_templates(app):
 
     with template_rendered.connected_to(record, app):
         yield recorded
+
+@pytest.fixture
+def bookings():
+    return [
+        {
+            "club": "Test Club",
+            "competition": "Test - Future Competition - Available",
+            "places": 7,
+        },
+        {
+            "club": "Test Club 2",
+            "competition": "Test - Future Competition - Available",
+            "places": 2,
+        },
+        {
+            "club": "Test Club",
+            "competition": "Test - Future Competition - Full",
+            "places": 3,
+        },
+    ]

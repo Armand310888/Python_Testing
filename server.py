@@ -22,7 +22,63 @@ def load_competitions():
         return list_of_competitions
 
 
-def create_app(config=None, competitions=None, clubs=None):
+def get_booking(
+    club,
+    competition,
+    bookings
+):
+    for booking in bookings:
+        if (
+            booking['club'] == club['name']
+            and booking['competition'] == competition['name']
+        ):
+            return booking
+
+    return None
+
+
+def get_places_booked_for_competition(
+    club,
+    competition,
+    bookings
+):
+    booking = get_booking(club, competition, bookings)
+
+    if booking is None:
+        return 0
+
+    return booking['places']
+
+
+def update_booking(
+    club,
+    competition,
+    places_required,
+    bookings,
+):
+    booking = get_booking(
+        club,
+        competition,
+        bookings,
+    )
+
+    if booking:
+        booking['places'] += places_required
+    else:
+        booking = {
+            'club': club['name'],
+            'competition': competition['name'],
+            'places': places_required
+        }
+        bookings.append(booking)
+
+
+def create_app(
+        config=None,
+        competitions=None,
+        clubs=None,
+        bookings=None
+):
     app = Flask(__name__)
 
     if config is not None:
@@ -35,6 +91,9 @@ def create_app(config=None, competitions=None, clubs=None):
 
     if clubs is None:
         clubs = load_clubs()
+
+    if bookings is None:
+        bookings = []
 
     @app.route('/')
     def index():
@@ -122,7 +181,28 @@ def create_app(config=None, competitions=None, clubs=None):
         ][0]
 
         places_required = int(request.form['places'])
-        competition['numberOfPlaces'] = int(competition['numberOfPlaces']) - places_required
+
+        places_already_booked = get_places_booked_for_competition(
+            club,
+            competition,
+            bookings,
+        )
+
+        if places_required + places_already_booked > 12:
+            flash('Error-cannot book more than 12 places for a competition!')
+            return render_template(
+                'welcome.html',
+                club=club,
+                competitions=competitions
+            )
+
+        update_booking(club, competition, places_required, bookings)
+
+        competition['numberOfPlaces'] = (
+            int(competition['numberOfPlaces'])
+            - places_required
+        )
+
         flash('Great-booking complete!')
         return render_template(
             'welcome.html',
