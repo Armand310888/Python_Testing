@@ -1,0 +1,18 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clubs and Points | GUDLFT Registration</title>
+</head>
+<body>
+    <h1>List of the registered clubs and their points!</h1>
+    {% if not clubs %}
+        <h2>No clubs available yet.</h2>
+    {% else %}
+    <ul>
+        {% for club in clubs %}
+            <li>{{club['name']}} - Points : {{club['points']}}</li>
+        {% endfor %}
+    {% endif %}
+    </ul>
+</body>
