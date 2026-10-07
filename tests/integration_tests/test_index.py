@@ -14,5 +14,4 @@ class TestIndex:
 
         assert response.status_code == 200
         assert template.name == 'index.html'
-
         assert 'Welcome to the GUDLFT Registration Portal!' in html
