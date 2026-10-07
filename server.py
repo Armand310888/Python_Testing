@@ -182,6 +182,16 @@ def create_app(
 
         places_required = int(request.form['places'])
 
+        club_points = int(club['points'])
+
+        if places_required > club_points:
+            flash('Error-Club does not have enough points!')
+            return render_template(
+                'welcome.html',
+                club=club,
+                competitions=competitions
+            )
+
         places_already_booked = get_places_booked_for_competition(
             club,
             competition,
@@ -200,6 +210,11 @@ def create_app(
 
         competition['numberOfPlaces'] = (
             int(competition['numberOfPlaces'])
+            - places_required
+        )
+
+        club['points'] = (
+            int(club['points'])
             - places_required
         )
 
