@@ -71,6 +71,7 @@ def captured_templates(app):
     with template_rendered.connected_to(record, app):
         yield recorded
 
+
 @pytest.fixture
 def bookings():
     return [
