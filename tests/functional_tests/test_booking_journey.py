@@ -1,4 +1,5 @@
 from flask import url_for
+from urllib.parse import urlparse
 
 from server import (
     get_places_booked_for_competition
@@ -107,7 +108,7 @@ def test_successful_booking_journey(
     response = client.get('/logout')
 
     assert response.status_code == 302
-    assert response.location == 'http://localhost/'
+    assert urlparse(response.location).path == '/'
 
 
 def test_booking_journey_rejected_for_insufficient_points(
