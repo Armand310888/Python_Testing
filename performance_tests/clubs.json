@@ -1,0 +1,52 @@
+[
+    {
+        "name": "Performance Club 1",
+        "email": "club1@example.com",
+        "points": "120"
+    },
+    {
+        "name": "Performance Club 2",
+        "email": "club2@example.com",
+        "points": "120"
+    },
+    {
+        "name": "Performance Club 3",
+        "email": "club3@example.com",
+        "points": "120"
+    },
+    {
+        "name": "Performance Club 4",
+        "email": "club4@example.com",
+        "points": "120"
+    },
+    {
+        "name": "Performance Club 5",
+        "email": "club5@example.com",
+        "points": "120"
+    },
+    {
+        "name": "Performance Club 6",
+        "email": "club6@example.com",
+        "points": "120"
+    },
+    {
+        "name": "Performance Club 7",
+        "email": "club7@example.com",
+        "points": "120"
+    },
+    {
+        "name": "Performance Club 8",
+        "email": "club8@example.com",
+        "points": "120"
+    },
+    {
+        "name": "Performance Club 9",
+        "email": "club9@example.com",
+        "points": "120"
+    },
+    {
+        "name": "Performance Club 10",
+        "email": "club10@example.com",
+        "points": "120"
+    }
+]
