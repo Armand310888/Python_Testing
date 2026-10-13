@@ -4,7 +4,9 @@ from pathlib import Path
 from server import create_app
 
 
-DATA_DIR = Path(__file__).resolve().parent
+DATA_DIR = (
+    Path(__file__).resolve().parent.parent / 'data/performance/'
+)
 
 
 with open(DATA_DIR / 'clubs.json') as clubs_file:

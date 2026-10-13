@@ -1,0 +1,17 @@
+[
+    {
+        "club": "Test Club 1 - 15 points",
+        "competition": "Test Competition 1 - Future - Available",
+        "places": 7
+    },
+    {
+        "club": "Test Club 2 - 2 points",
+        "competition": "Test Competition 1 - Future - Available",
+        "places": 2
+    },
+    {
+        "club": "Test Club 1 - 15 points",
+        "competition": "Test Competition 3 - Future - Full",
+        "places": 3
+    }
+]
