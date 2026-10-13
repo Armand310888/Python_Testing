@@ -35,9 +35,9 @@ def test_successful_booking_journey(
     assert response.status_code == 200
     assert captured_templates[-1][0].name == 'welcome.html'
     assert captured_templates[-1][1]['club'] == club
-    assert 'Test - Future Competition - Available' in html
-    assert 'Test - Future Competition - Full' in html
-    assert 'Test - Past Competition' not in html
+    assert competitions[0]['name'] in html
+    assert competitions[2]['name'] in html
+    assert competitions[1]['name'] not in html
 
     # Step 3: access booking
     with app.test_request_context():
@@ -140,9 +140,9 @@ def test_booking_journey_rejected_for_insufficient_points(
     assert response.status_code == 200
     assert captured_templates[-1][0].name == 'welcome.html'
     assert captured_templates[-1][1]['club'] == club
-    assert 'Test - Future Competition - Available' in html
-    assert 'Test - Future Competition - Full' in html
-    assert 'Test - Past Competition' not in html
+    assert competitions[0]['name'] in html
+    assert competitions[2]['name'] in html
+    assert competitions[1]['name'] not in html
 
     # Step 3: access booking
     with app.test_request_context():

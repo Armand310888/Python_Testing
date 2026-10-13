@@ -43,17 +43,24 @@ class TestShowSummary:
         assert template.name == 'index.html'
         assert 'Club not found.' in html
 
-    def test_display_only_future_competitions(self, client):
+    def test_display_only_future_competitions(
+            self,
+            client,
+            clubs,
+            competitions
+    ):
+        club = clubs[0]
+
         response = client.post(
             "/showSummary",
-            data={"email": "testclub@example.com"},
+            data={"email": club['email']},
         )
 
         html = response.get_data(as_text=True)
 
-        assert 'Test - Future Competition - Available' in html
-        assert 'Test - Future Competition - Full' in html
-        assert 'Test - Past Competition' not in html
+        assert competitions[0]['name'] in html
+        assert competitions[2]['name'] in html
+        assert competitions[1]['name'] not in html
 
     def test_future_competition_displays_booking_link_if_places_available(
         self,
@@ -62,14 +69,13 @@ class TestShowSummary:
         clubs,
         app
     ):
+        competition = competitions[0]
+        club = clubs[0]
 
         response = client.post(
             "/showSummary",
-            data={"email": "testclub@example.com"},
+            data={"email": club['email']},
         )
-
-        competition = competitions[0]
-        club = clubs[0]
 
         with app.test_request_context():
             url = url_for(
@@ -87,14 +93,13 @@ class TestShowSummary:
             clubs,
             app
     ):
+        competition = competitions[2]
+        club = clubs[0]
 
         response = client.post(
             "/showSummary",
-            data={"email": "testclub@example.com"},
+            data={"email": club['email']},
         )
-
-        competition = competitions[2]
-        club = clubs[0]
 
         with app.test_request_context():
             url = url_for(
