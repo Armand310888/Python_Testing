@@ -1,51 +1,184 @@
-# gudlift-registration
+# Güdlft — Registration Platform
 
-1. Why
+A Flask application for sports club competition registrations, improved as part of **OpenClassrooms Project 11: Debugging and Testing**.
 
+The project focuses on correcting business logic, making the application testable, and validating it through unit, integration, functional, end-to-end, and load tests.
 
-    This is a proof of concept (POC) project to show a light-weight version of our competition booking platform. The aim is the keep things as light as possible, and use feedback from the users to iterate.
+## Repository
 
-2. Getting Started
+**GitHub:** https://github.com/Armand310888/Python_Testing.git
 
-    This project uses the following technologies:
+## Features
 
-    * Python v3.x+
+- Club login using a registered email address.
+- Display of upcoming competitions and remaining places.
+- Competition booking using club points (one point per place).
+- Validation of available points, remaining places, and the limit of **12 places per club per competition**.
+- Public view of clubs and their points.
+- Logout.
 
-    * [Flask](https://flask.palletsprojects.com/en/1.1.x/)
+## Technologies
 
-        Whereas Django does a lot of things for us out of the box, Flask allows us to add only what we need. 
-     
+- **Python** and **Flask** — web application.
+- **pytest** — automated tests and fixtures.
+- **Flask test client** — HTTP integration tests without starting a separate server.
+- **pytest-flask** — installed test dependency; the project's own `app` and `client` fixtures rely on pytest and Flask directly.
+- **Coverage.py** (`coverage`) — code coverage measurement.
+- **Selenium** — end-to-end browser testing with Chrome.
+- **Locust** — HTTP load and performance testing.
 
-    * [Virtual environment](https://virtualenv.pypa.io/en/stable/installation.html)
+## Installation
 
-        This ensures you'll be able to install the correct packages without interfering with Python on your machine.
+### 1. Clone the repository
 
-        Before you begin, please ensure you have this installed globally. 
+Replace `REPOSITORY_URL_HERE` with the HTTPS URL of **your own GitHub fork**:
 
+```bash
+git clone https://github.com/Armand310888/Python_Testing.git
+cd Python_Testing
+```
 
-3. Installation
+### 2. Create and activate a virtual environment
 
-    - After cloning, change into the directory and type <code>virtualenv .</code>. This will then set up a a virtual python environment within that directory.
+```bash
+python -m venv .venv
+source .venv/bin/activate
+```
 
-    - Next, type <code>source bin/activate</code>. You should see that your command prompt has changed to the name of the folder. This means that you can install packages in here without affecting affecting files outside. To deactivate, type <code>deactivate</code>
+On Windows PowerShell, activate with `.venv\Scripts\Activate.ps1` instead.
 
-    - Rather than hunting around for the packages you need, you can install in one step. Type <code>pip install -r requirements.txt</code>. This will install all the packages listed in the respective file. If you install a package, make sure others know by updating the requirements.txt file. An easy way to do this is <code>pip freeze > requirements.txt</code>
+### 3. Install dependencies
 
-    - Flask requires that you set an environmental variable to the python file. However you do that, you'll want to set the file to be <code>server.py</code>. Check [here](https://flask.palletsprojects.com/en/1.1.x/quickstart/#a-minimal-application) for more details
+```bash
+python -m pip install -r requirements.txt
+```
 
-    - You should now be ready to test the application. In the directory, type either <code>flask run</code> or <code>python -m flask run</code>. The app should respond with an address you should be able to go to using your browser.
+For Selenium tests, Google Chrome and a compatible ChromeDriver (typically managed by recent Selenium versions) must be available.
 
-4. Current Setup
+## Run the application
 
-    The app is powered by [JSON files](https://www.tutorialspoint.com/json/json_quick_guide.htm). This is to get around having a DB until we actually need one. The main ones are:
-     
-    * competitions.json - list of competitions
-    * clubs.json - list of clubs with relevant information. You can look here to see what email addresses the app will accept for login.
+From the repository root:
 
-5. Testing
+```bash
+FLASK_APP=server.py python -m flask run
+```
 
-    You are free to use whatever testing framework you like-the main thing is that you can show what tests you are using.
+Open `http://127.0.0.1:5000` in a browser.
 
-    We also like to show how well we're testing, so there's a module called 
-    [coverage](https://coverage.readthedocs.io/en/coverage-5.1/) you should add to your project.
+The default application reads its clubs and competitions from the root JSON files. Automated tests use separate datasets to avoid modifying production-like data.
 
+## Project structure
+
+```text
+Python_Testing/
+├── server.py
+├── clubs.json
+├── competitions.json
+├── requirements.txt
+├── .coveragerc
+├── README.md
+├── templates/
+│   ├── index.html
+│   ├── welcome.html
+│   └── booking.html
+├── tests/
+│   ├── conftest.py
+│   ├── data/
+│   │   ├── functional/
+│   │   │   ├── clubs.json
+│   │   │   ├── competitions.json
+│   │   │   └── bookings.json
+│   │   └── performance/
+│   │       ├── clubs.json
+│   │       └── competitions.json
+│   ├── unit_tests/
+│   ├── integration_tests/
+│   ├── functional_tests/
+│   │   ├── test_booking_journey.py
+│   │   ├── test_selenium_booking.py
+│   │   └── selenium_server.py
+│   └── performance_tests/
+│       ├── generate_data.py
+│       ├── locustfile.py
+│       └── performance_server.py
+└── docs/
+    └── locust-report.html
+```
+
+## Automated testing
+
+### Unit, integration, and functional tests
+
+```bash
+python -m pytest tests/unit_tests tests/integration_tests tests/functional_tests/test_booking_journey.py -v
+```
+
+The application factory `create_app()` allows test data and Flask configuration to be injected. Shared pytest fixtures are defined in `tests/conftest.py`.
+
+### Coverage
+
+```bash
+coverage run -m pytest tests/unit_tests tests/integration_tests tests/functional_tests/test_booking_journey.py
+coverage report -m
+```
+
+**Measured result: 100% coverage of `server.py`.** The `.coveragerc` configuration excludes test files from the coverage calculation. Coverage indicates which lines were executed; it does not, by itself, prove that all possible behaviors have been tested.
+
+### Selenium end-to-end test
+
+Run the test Flask server with the dedicated functional dataset in **terminal 1**:
+
+```bash
+FLASK_APP=tests/functional_tests/selenium_server.py python -m flask run
+```
+
+Then run Selenium in **terminal 2**:
+
+```bash
+python -m pytest tests/functional_tests/test_selenium_booking.py -v
+```
+
+The scenario checks club login, competition selection, booking submission, confirmation, and updates to the club's points and competition availability.
+
+**Important:** The Selenium test changes the in-memory data of the separate Flask server process. **Stop and restart that Flask server before each new Selenium run** to reset the dataset. Running pytest again without restarting the server may fail because the previous booking is still recorded in memory.
+
+## Load testing with Locust
+
+### Start the performance test server
+
+```bash
+FLASK_APP=tests/performance_tests/performance_server.py python -m flask run
+```
+
+### Start Locust in a second terminal
+
+```bash
+python -m locust -f tests/performance_tests/locustfile.py --host=http://127.0.0.1:5000
+```
+
+The `-f` option (`--locustfile`) specifies the Python file defining the simulated users and their tasks.
+
+Open `http://127.0.0.1:8089` and configure **6 concurrent users** and a **2-minute run**. Use the same spawn rate when comparing different runs.
+
+### Latest recorded results — 13 October 2026
+
+| Metric | Result |
+| --- | ---: |
+| HTTP requests | **349** |
+| Failed requests | **0** |
+| Average response time | **4.31 ms** |
+| Median response time | **3 ms** |
+| 95th percentile | **9 ms** |
+| 99th percentile | **11 ms** |
+| Maximum response time | **18 ms** |
+| Average throughput | **2.91 requests/s** |
+
+These measurements describe a short local load test, not production capacity. The previous run (12 October 2026) recorded **364 requests** with **0 failures**.
+
+**[View the full Locust HTML report](docs/locust-report.html)** — keep the `docs/locust-report.html` file alongside this README when committing it to GitHub.
+
+## Notes
+
+- Booking data is held in memory during execution; restarting the application resets that state.
+- Test data is separated into functional and performance datasets.
+- The project emphasizes reproducible tests and clear separation between test levels.
