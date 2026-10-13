@@ -14,3 +14,4 @@ Werkzeug==1.0.1
 blinker==1.9.0
 pytest-mock==3.16.0
 locust==2.46.7
+selenium==4.51.0
