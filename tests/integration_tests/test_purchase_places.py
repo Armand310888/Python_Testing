@@ -23,7 +23,7 @@ class TestPurchasePlaces:
             - places_required
         )
         expected_competition_places_after_booking = (
-            int(competition['numberOfPlaces'])
+            int(competition['number_of_places'])
             - places_required
         )
         expected_booked_places_after_booking = (
@@ -36,7 +36,7 @@ class TestPurchasePlaces:
         )
 
         response = client.post(
-            '/purchasePlaces',
+            '/purchase-places',
             data={
                 'club': club['name'],
                 'competition': competition['name'],
@@ -57,7 +57,7 @@ class TestPurchasePlaces:
             == expected_club_points_after_booking
         )
         assert (
-            competition['numberOfPlaces']
+            competition['number_of_places']
             == expected_competition_places_after_booking
         )
         assert (
@@ -68,7 +68,7 @@ class TestPurchasePlaces:
             )
             == expected_booked_places_after_booking
         )
-        assert 'Great-booking complete!' in html
+        assert 'Success-Booking complete!' in html
 
     def test_purchase_places_fails_if_not_enough_club_points(
         self,
@@ -86,7 +86,7 @@ class TestPurchasePlaces:
             club['points']
         )
         expected_competition_places_after_booking = (
-            competition['numberOfPlaces']
+            competition['number_of_places']
         )
         expected_booked_places_after_booking = (
             get_places_booked_for_competition(
@@ -97,7 +97,7 @@ class TestPurchasePlaces:
         )
 
         response = client.post(
-            '/purchasePlaces',
+            '/purchase-places',
             data={
                 'club': club['name'],
                 'competition': competition['name'],
@@ -118,7 +118,7 @@ class TestPurchasePlaces:
             == expected_club_points_after_booking
         )
         assert (
-            competition['numberOfPlaces']
+            competition['number_of_places']
             == expected_competition_places_after_booking
         )
         assert (
@@ -147,7 +147,7 @@ class TestPurchasePlaces:
             club['points']
         )
         expected_competition_places_after_booking = (
-            competition['numberOfPlaces']
+            competition['number_of_places']
         )
         expected_booked_places_after_booking = (
             get_places_booked_for_competition(
@@ -158,7 +158,7 @@ class TestPurchasePlaces:
         )
 
         response = client.post(
-            '/purchasePlaces',
+            '/purchase-places',
             data={
                 'club': club['name'],
                 'competition': competition['name'],
@@ -179,7 +179,7 @@ class TestPurchasePlaces:
             == expected_club_points_after_booking
         )
         assert (
-            competition['numberOfPlaces']
+            competition['number_of_places']
             == expected_competition_places_after_booking
         )
         assert (
@@ -210,7 +210,7 @@ class TestPurchasePlaces:
             club['points']
         )
         expected_competition_places_after_booking = (
-            competition['numberOfPlaces']
+            competition['number_of_places']
         )
         expected_booked_places_after_booking = (
             get_places_booked_for_competition(
@@ -221,7 +221,7 @@ class TestPurchasePlaces:
         )
 
         response = client.post(
-            '/purchasePlaces',
+            '/purchase-places',
             data={
                 'club': club['name'],
                 'competition': competition['name'],
@@ -242,7 +242,7 @@ class TestPurchasePlaces:
             == expected_club_points_after_booking
         )
         assert (
-            competition['numberOfPlaces']
+            competition['number_of_places']
             == expected_competition_places_after_booking
         )
         assert (
@@ -254,7 +254,8 @@ class TestPurchasePlaces:
             == expected_booked_places_after_booking
         )
         assert (
-            'Error-cannot book more than 12 places for a competition!' in html
+            'Error-Cannot book more than 12 places for one competition!'
+            in html
         )
 
     def test_purchase_places_creates_booking_if_none_exists(
@@ -274,7 +275,7 @@ class TestPurchasePlaces:
             - places_required
         )
         expected_competition_places_after_booking = (
-            int(competition['numberOfPlaces'])
+            int(competition['number_of_places'])
             - places_required
         )
 
@@ -291,7 +292,7 @@ class TestPurchasePlaces:
         ) is None
 
         response = client.post(
-            '/purchasePlaces',
+            '/purchase-places',
             data={
                 'club': club['name'],
                 'competition': competition['name'],
@@ -312,8 +313,8 @@ class TestPurchasePlaces:
             == expected_club_points_after_booking
         )
         assert (
-            competition['numberOfPlaces']
+            competition['number_of_places']
             == expected_competition_places_after_booking
         )
         assert expected_new_booking in bookings
-        assert 'Great-booking complete!' in html
+        assert 'Success-Booking complete!' in html

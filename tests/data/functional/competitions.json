@@ -2,21 +2,21 @@
     {
         "name": "Test Competition 1 - Future - Available",
         "date": "2100-01-01 10:00:00",
-        "numberOfPlaces": "15"
+        "number_of_places": "15"
     },
     {
         "name": "Test Competition 2 - Past",
         "date": "2000-01-01 10:00:00",
-        "numberOfPlaces": "15"
+        "number_of_places": "15"
     },
     {
         "name": "Test Competition 3 - Future - Full",
         "date": "2100-02-01 10:00:00",
-        "numberOfPlaces": "0"
+        "number_of_places": "0"
     },
     {
         "name": "Test Competition 4 - Future - Available",
         "date": "2100-02-01 10:00:00",
-        "numberOfPlaces": "15"
+        "number_of_places": "15"
     }
 ]

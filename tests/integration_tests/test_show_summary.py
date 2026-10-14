@@ -12,7 +12,7 @@ class TestShowSummary:
         club = clubs[0]
 
         response = client.post(
-            '/showSummary',
+            '/show-summary',
             data={'email': club['email']},
         )
 
@@ -30,7 +30,7 @@ class TestShowSummary:
         captured_templates,
     ):
         response = client.post(
-            "/showSummary",
+            "/show-summary",
             data={"email": "unknownclub@example.com"},
         )
 
@@ -52,7 +52,7 @@ class TestShowSummary:
         club = clubs[0]
 
         response = client.post(
-            "/showSummary",
+            "/show-summary",
             data={"email": club['email']},
         )
 
@@ -73,7 +73,7 @@ class TestShowSummary:
         club = clubs[0]
 
         response = client.post(
-            "/showSummary",
+            "/show-summary",
             data={"email": club['email']},
         )
 
@@ -97,7 +97,7 @@ class TestShowSummary:
         club = clubs[0]
 
         response = client.post(
-            "/showSummary",
+            "/show-summary",
             data={"email": club['email']},
         )
 

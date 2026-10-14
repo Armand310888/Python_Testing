@@ -22,6 +22,42 @@ def load_competitions():
         return list_of_competitions
 
 
+def find_club(club_identifier, search_field, clubs):
+    return next(
+        (
+            club
+            for club in clubs
+            if club[search_field] == club_identifier
+        ),
+        None
+    )
+
+
+def find_competition(competition_name, competitions):
+    return next(
+        (
+            competition
+            for competition in competitions
+            if competition['name'] == competition_name
+        ),
+        None
+    )
+
+
+def get_future_competitions(competitions):
+    return [
+        competition
+        for competition in competitions
+        if (
+            datetime.strptime(
+                competition['date'],
+                "%Y-%m-%d %H:%M:%S",
+            )
+            > datetime.now()
+        )
+    ]
+
+
 def get_booking(
     club,
     competition,
@@ -50,17 +86,42 @@ def get_places_booked_for_competition(
     return booking['places']
 
 
+def validate_booking(
+    places_required,
+    club_points,
+    competition_places,
+    bookings,
+    club,
+    competition,
+):
+    if places_required <= 0:
+        return 'Error-Number of Places must be positive!'
+    
+    if places_required > club_points:
+        return 'Error-Club does not have enough points!'
+
+    places_already_booked = get_places_booked_for_competition(
+        club,
+        competition,
+        bookings,
+    )
+
+    if places_required + places_already_booked > 12:
+        return 'Error-Cannot book more than 12 places for one competition!'
+
+    if places_required > competition_places:
+        return 'Error-Competition does not have enough available places!'
+
+    return None
+
+
 def update_booking(
     club,
     competition,
     places_required,
     bookings,
 ):
-    booking = get_booking(
-        club,
-        competition,
-        bookings,
-    )
+    booking = get_booking(club, competition, bookings)
 
     if booking:
         booking['places'] += places_required
@@ -71,6 +132,20 @@ def update_booking(
             'places': places_required
         }
         bookings.append(booking)
+
+
+def update_competition_places(competition, purchased_places):
+    competition['number_of_places'] = (
+        int(competition['number_of_places'])
+        - purchased_places
+    )
+
+
+def update_club_points(club, purchased_places):
+    club['points'] = (
+        int(club['points'])
+        - purchased_places
+    )
 
 
 def create_app(
@@ -99,28 +174,15 @@ def create_app(
     def index():
         return render_template('index.html')
 
-    @app.route('/showSummary', methods=['POST'])
+    @app.route('/show-summary', methods=['POST'])
     def show_summary():
-        matching_clubs = [
-            club
-            for club in clubs
-            if club['email'] == request.form['email']
-        ]
+        club = find_club(request.form.get('email'), 'email', clubs)
 
-        if not matching_clubs:
-            flash('Club not found.')
+        if not club:
+            flash('Error-Club not found.')
             return render_template('index.html')
 
-        club = matching_clubs[0]
-
-        future_competitions = [
-            competition
-            for competition in competitions
-            if datetime.strptime(
-                competition['date'],
-                "%Y-%m-%d %H:%M:%S",
-                ) > datetime.now()
-        ]
+        future_competitions = get_future_competitions(competitions)
 
         return render_template(
             'welcome.html',
@@ -130,108 +192,100 @@ def create_app(
 
     @app.route('/book/<competition>/<club>')
     def book(competition, club):
-        matching_clubs = [
-            c
-            for c in clubs
-            if c['name'] == club
-        ]
+        matching_club = find_club(club, 'name', clubs)
 
-        if not matching_clubs:
-            flash('Club not found.')
+        if not matching_club:
+            flash('Error-Club not found.')
             return render_template(
                 'index.html'
             )
 
-        found_club = matching_clubs[0]
+        future_competitions = get_future_competitions(
+            competitions
+        )
 
-        matching_competitions = [
-            c
-            for c in competitions 
-            if c['name'] == competition
-        ]
+        matching_competition = find_competition(
+            competition,
+            future_competitions
+        )
 
-        if not matching_competitions:
-            flash('Something went wrong-please try again')
+        if not matching_competition:
+            flash('Error-Competition not found.')
             return render_template(
                 'welcome.html',
-                club=found_club,
-                competitions=competitions
+                club=matching_club,
+                competitions=future_competitions
             )
-
-        found_competition = matching_competitions[0]
 
         return render_template(
             'booking.html',
-            club=found_club,
-            competition=found_competition
+            club=matching_club,
+            competition=matching_competition
         )
 
-    @app.route('/purchasePlaces', methods=['POST'])
+    @app.route('/purchase-places', methods=['POST'])
     def purchase_places():
-        competition = [
-            c
-            for c in competitions 
-            if c['name'] == request.form['competition']
-        ][0]
+        future_competitions = get_future_competitions(competitions)
 
-        club = [
-            c
-            for c in clubs
-            if c['name'] == request.form['club']
-        ][0]
+        competition = find_competition(
+            request.form.get('competition'), future_competitions
+        )
 
-        places_required = int(request.form['places'])
+        club = find_club(request.form.get('club'), 'name', clubs)
+
+        if not club:
+            flash('Error-Club not found.')
+            return render_template('index.html')
+
+        if not competition:
+            flash('Error-Competition not found.')
+            return render_template(
+                'welcome.html',
+                club=club,
+                competitions=future_competitions
+            )
+
+        try:
+            places_required = int(request.form.get('places'))
+        except (ValueError, TypeError):
+            flash('Error-Invalid number of places!')
+            return render_template(
+                'welcome.html',
+                club=club,
+                competitions=future_competitions
+            )
 
         club_points = int(club['points'])
-        competition_places = int(competition['numberOfPlaces'])
+        competition_places = int(competition['number_of_places'])
 
-        if places_required > club_points:
-            flash('Error-Club does not have enough points!')
-            return render_template(
-                'welcome.html',
-                club=club,
-                competitions=competitions
-            )
-
-        if places_required > competition_places:
-            flash('Error-Competition does not have enough available places!')
-            return render_template(
-                'welcome.html',
-                club=club,
-                competitions=competitions
-            )
-
-        places_already_booked = get_places_booked_for_competition(
-            club,
-            competition,
+        validation_message = validate_booking(
+            places_required,
+            club_points,
+            competition_places,
             bookings,
+            club,
+            competition
         )
 
-        if places_required + places_already_booked > 12:
-            flash('Error-cannot book more than 12 places for a competition!')
+        if validation_message:
+            flash(validation_message)
             return render_template(
                 'welcome.html',
                 club=club,
-                competitions=competitions
+                competitions=future_competitions
             )
 
         update_booking(club, competition, places_required, bookings)
 
-        competition['numberOfPlaces'] = (
-            int(competition['numberOfPlaces'])
-            - places_required
-        )
+        update_competition_places(competition, places_required)
 
-        club['points'] = (
-            int(club['points'])
-            - places_required
-        )
+        update_club_points(club, places_required)
 
-        flash('Great-booking complete!')
+        flash('Success-Booking complete!')
         return render_template(
             'welcome.html',
             club=club,
-            competitions=competitions
+            competitions=future_competitions
         )
 
     @app.route('/clubs')

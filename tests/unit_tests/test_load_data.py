@@ -43,17 +43,17 @@ def test_load_competitions_returns_competitions_from_json(mocker):
         {
             'name': 'Test Competition 1',
             'date': '2100-04-01 10:00:00',
-            'numberOfPlaces': '15',
+            'number_of_places': '15',
         },
         {
             'name': 'Test Competition 2',
             'date': '2100-05-01 10:00:00',
-            'numberOfPlaces': '15',
+            'number_of_places': '15',
         },
         {
             'name': 'Test Competition 3',
             'date': '2100-06-01 10:00:00',
-            'numberOfPlaces': '15',
+            'number_of_places': '15',
         },
     ]
 

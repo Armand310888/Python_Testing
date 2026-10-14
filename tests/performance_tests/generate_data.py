@@ -19,7 +19,7 @@ competitions = [
     {
         "name": f"Performance Competition {i}",
         "date": "2100-01-01 10:00:00",
-        "numberOfPlaces": "120"
+        "number_of_places": "120"
     }
     for i in range(1, 11)
 ]

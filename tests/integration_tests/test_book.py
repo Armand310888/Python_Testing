@@ -76,7 +76,7 @@ class TestBook:
         competition = {
             'name': 'Unknown Competition',
             'date': '2100-03-01 10:00:00',
-            'numberOfPlaces': '10',
+            'number_of_places': '10',
         }
         club = clubs[0]
 
@@ -95,5 +95,5 @@ class TestBook:
 
         assert response.status_code == 200
         assert template.name == 'welcome.html'
-        assert 'Something went wrong-please try again' in html
+        assert 'Error-Competition not found.' in html
         assert context['club'] == club

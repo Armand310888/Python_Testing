@@ -36,7 +36,7 @@ def test_successful_booking(
     )
     summary_button.click()
 
-    assert browser.current_url == 'http://127.0.0.1:5000/showSummary'
+    assert browser.current_url == 'http://127.0.0.1:5000/show-summary'
     assert club['email'] in browser.page_source
     assert competition['name'] in browser.find_element(
         By.TAG_NAME,
@@ -74,13 +74,13 @@ def test_successful_booking(
     )
 
     expected_competition_places_after_booking = (
-        int(competition['numberOfPlaces'])
+        int(competition['number_of_places'])
         - places_required
     )
 
     page_text = browser.find_element(By.TAG_NAME, 'body').text
 
-    assert browser.current_url == 'http://127.0.0.1:5000/purchasePlaces'
+    assert browser.current_url == 'http://127.0.0.1:5000/purchase-places'
     assert club['email'] in page_text
     assert (
         f'Points available: {expected_club_points_after_booking}'
@@ -92,4 +92,4 @@ def test_successful_booking(
         By.XPATH,
         f'//li[contains(., "{competition["name"]}")]'
     ).text
-    assert 'Great-booking complete!' in page_text
+    assert 'Success-Booking complete!' in page_text

@@ -22,7 +22,7 @@ class GudlftUser(HttpUser):
     @task(3)
     def view_competitions(self):
         self.client.post(
-            '/showSummary',
+            '/show-summary',
             data={'email': self.club_email}
         )
 
@@ -46,7 +46,7 @@ class GudlftUser(HttpUser):
         competition_name = f'Performance Competition {competition_number}'
 
         with self.client.post(
-            '/purchasePlaces',
+            '/purchase-places',
             data={
                 'club': self.club_name,
                 'competition': competition_name,
@@ -55,7 +55,7 @@ class GudlftUser(HttpUser):
             catch_response=True,
         ) as response:
 
-            if 'Great-booking complete!' in response.text:
+            if 'Success-Booking complete!' in response.text:
                 response.success()
             else:
                 response.failure('Booking rejected')

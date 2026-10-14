@@ -27,7 +27,7 @@ def test_successful_booking_journey(
 
     # Step 2: identification and competitions display
     response = client.post(
-        '/showSummary',
+        '/show-summary',
         data={'email': club['email']}
     )
     html = response.get_data(as_text=True)
@@ -60,7 +60,7 @@ def test_successful_booking_journey(
         - places_required
     )
     expected_competition_places_after_booking = (
-        int(competition['numberOfPlaces'])
+        int(competition['number_of_places'])
         - places_required
     )
     expected_booked_places_after_booking = (
@@ -73,7 +73,7 @@ def test_successful_booking_journey(
     )
 
     response = client.post(
-        '/purchasePlaces',
+        '/purchase-places',
         data={
             'club': club['name'],
             'competition': competition['name'],
@@ -91,7 +91,7 @@ def test_successful_booking_journey(
         == expected_club_points_after_booking
     )
     assert (
-        competition['numberOfPlaces']
+        competition['number_of_places']
         == expected_competition_places_after_booking
     )
     assert (
@@ -102,7 +102,7 @@ def test_successful_booking_journey(
         )
         == expected_booked_places_after_booking
     )
-    assert 'Great-booking complete!' in html
+    assert 'Success-Booking complete!' in html
 
     # Step 5: logout
     response = client.get('/logout')
@@ -132,7 +132,7 @@ def test_booking_journey_rejected_for_insufficient_points(
 
     # Step 2: identification and competitions display
     response = client.post(
-        '/showSummary',
+        '/show-summary',
         data={'email': club['email']}
     )
     html = response.get_data(as_text=True)
@@ -162,7 +162,7 @@ def test_booking_journey_rejected_for_insufficient_points(
     # Step 4: purchase places
     expected_club_points_after_booking = club['points']
 
-    expected_competition_places_after_booking = competition['numberOfPlaces']
+    expected_competition_places_after_booking = competition['number_of_places']
 
     expected_booked_places_after_booking = (
         get_places_booked_for_competition(
@@ -173,7 +173,7 @@ def test_booking_journey_rejected_for_insufficient_points(
     )
 
     response = client.post(
-        '/purchasePlaces',
+        '/purchase-places',
         data={
             'club': club['name'],
             'competition': competition['name'],
@@ -191,7 +191,7 @@ def test_booking_journey_rejected_for_insufficient_points(
         == expected_club_points_after_booking
     )
     assert (
-        competition['numberOfPlaces']
+        competition['number_of_places']
         == expected_competition_places_after_booking
     )
     assert (
